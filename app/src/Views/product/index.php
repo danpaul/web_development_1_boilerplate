@@ -2,25 +2,15 @@
 
 /** @var \App\ViewModels\ProductsViewModel $vm */
 
+require __DIR__ . '/../partials/header.php';
+
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
+<?php
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Products Shop</title>
-</head>
+require __DIR__ . '/../partials/hero.php';
 
-<body>
-    <ul>
-        <?php foreach ($vm->products as $product) { ?>
-            <li>
-                <h2><?php echo htmlspecialchars($product->title, ENT_QUOTES, 'UTF-8'); ?></h2>
-            </li>
-        <?php } ?>
-    </ul>
-</body>
+$products = $vm->products;
+require __DIR__ . '/../partials/product_grid.php';
 
-</html>
+require __DIR__ . '/../partials/footer.php';
