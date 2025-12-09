@@ -5,11 +5,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- add script link here -->
     <title>JS Example</title>
     <script>
-    console.log("Hello from JS!");
+        console.log("Hello from JS!");
     </script>
+    <!-- add script link here -->
 </head>
 
 <body>

@@ -1,6 +1,6 @@
 <?php
 
-// NOTE - very simplified auth flow for demo/exercise purposes only! For the assignment, use routing and MVC, and proper password hashing/authentication!!!
+// NOTE - for demo/exercise purposes only. For the assignment, use routing and MVC, and proper password hashing/authentication!!!
 
 // start the session
 session_start();
@@ -8,6 +8,10 @@ session_start();
 // Simple hardcoded credentials for demo
 $valid_username = "admin";
 $valid_password = "password123";
+// password hash generated using `password_hash() function: password_hash("password123", PASSWORD_DEFAULT);
+// this string contains the hash algorithm, cost, and salt used to create the hash
+// normally this would be saved in the database and retrieved during login
+$hashed_password = '$2y$12$bt8BLHOZy7twnOXYB4w9/OHEHngBHdxFg2FFoW1LetdtKWyzL81vi';
 
 $message = "";
 
@@ -16,7 +20,11 @@ if (isset($_POST['login'])) {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    if ($username === $valid_username && $password === $valid_password) {
+    if (
+        $username === $valid_username &&
+        // use password_verify to check the password against the hash
+        password_verify($password, $hashed_password)
+    ) {
         $_SESSION['logged_in'] = true;
         $_SESSION['username'] = $username; // Normally store the user ID as the primary identifier
     } else {
