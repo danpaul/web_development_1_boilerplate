@@ -19,6 +19,14 @@ function check_balance(): string
     return json_encode(['balance' => $amount, 'currency' => 'EUR']);
 }
 
+function run_tool(string $name): string
+{
+    return match ($name) {
+        'check_balance' => check_balance(),
+        default => json_encode(['error' => 'Unknown tool']),
+    };
+}
+
 function normalize_assistant_message(array $message): array
 {
     // json_decode(..., true) turns empty JSON objects {} into [].
@@ -74,25 +82,37 @@ function call_ollama(array $payload): array
 
 $systemPrompt = <<<PROMPT
 You are a helpful banking customer support assistant.
-Answer the customer's question using ONLY the FAQ context below.
-If the answer is not in the FAQ, say you do not have that information and suggest contacting support.
-Keep the answer concise and clear.
-When the customer asks for their current or live account balance, call the check_balance tool instead of only explaining how to check balance in the FAQ.
 
-FAQ context:
+Tool policy:
+- Call check_balance when the customer asks for their live balance amount. Examples that MUST call the tool: "what is my balance?", "what's my balance?", "how much money do I have?", "how much is in my account?".
+- Do not call check_balance for how-to questions. "How do I check my account balance?" must be answered from the FAQ and must not call the tool.
+- Never invent a balance. The FAQ does not contain the customer's balance.
+- If a how-to question is not in the FAQ, say you do not have that information and suggest contacting support.
+- Keep answers concise and clear.
+
+## FAQ
+
 {$faq}
+
+Final check before you answer:
+- "what is my balance?" -> call check_balance
+- "how much money do I have?" -> call check_balance
+- "how do I check my account balance?" -> reply with the FAQ steps: sign in to online banking or the mobile app and select the account. Do not call a tool.
 PROMPT;
+
+$emptyParameters = [
+    'type' => 'object',
+    'properties' => new stdClass(),
+    'required' => [],
+];
 
 $tools = [
     [
         'type' => 'function',
         'function' => [
             'name' => 'check_balance',
-            'description' => 'Get the customer\'s current account balance (demo).',
-            'parameters' => [
-                'type' => 'object',
-                'properties' => new stdClass(),
-            ],
+            'description' => 'Get the live numeric balance of the customer account. Call this for what is my balance and how much money do I have. Do not call this for how-to questions.',
+            'parameters' => $emptyParameters,
         ],
     ],
 ];
@@ -102,11 +122,18 @@ $messages = [
     ['role' => 'user', 'content' => $question],
 ];
 
+$model = 'qwen3:0.6b';
+$options = [
+    'temperature' => 1.0,
+    'seed' => 42,
+];
+
 $result = call_ollama([
-    'model' => 'qwen3:0.6b',
+    'model' => $model,
     'messages' => $messages,
     'stream' => false,
     'tools' => $tools,
+    'options' => $options,
 ]);
 
 $toolsUsed = [];
@@ -118,9 +145,7 @@ if (!empty($toolCalls)) {
 
     foreach ($toolCalls as $toolCall) {
         $name = $toolCall['function']['name'] ?? '';
-        $toolResult = $name === 'check_balance'
-            ? check_balance()
-            : json_encode(['error' => 'Unknown tool']);
+        $toolResult = run_tool($name);
 
         $toolsUsed[] = [
             'name' => $name,
@@ -135,10 +160,12 @@ if (!empty($toolCalls)) {
     }
 
     $result = call_ollama([
-        'model' => 'qwen3:0.6b',
+        'model' => $model,
         'messages' => $messages,
         'stream' => false,
+        'think' => false,
         'tools' => $tools,
+        'options' => $options,
     ]);
 
     $assistantMessage = $result['message'] ?? [];
