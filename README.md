@@ -65,13 +65,13 @@ If you add new classes or change namespaces, regenerate the autoloader:
 docker compose run --rm php composer dump-autoload
 ```
 
-Example usage is wired in `app/public/index.php`. A sample script is at `app/public/hello.php`, and controller classes live under `app/src/Controllers/`.
+Example usage is wired in `app/public/index.php`: the `GET /hello/{name}` route calls `HelloController` (`app/src/Controllers/HelloController.php`) as an example. Controller classes live under `app/src/Controllers/`.
 
 ### NGINX
 
 NGINX will now serve files in the app/public folder.
 
-Go to [http://localhost/hello.php](http://localhost/hello.php). You should see a hello world message.
+Go to [http://localhost](http://localhost). You should see "Welcome home!" (from `HomeController::home`).
 
 ### PHPMyAdmin
 
