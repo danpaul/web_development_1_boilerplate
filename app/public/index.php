@@ -21,6 +21,7 @@ $dispatcher = simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/todo', ['App\Controllers\TodoController', 'index']);
     $r->addRoute('POST', '/todo/add', ['App\Controllers\TodoController', 'add']);
     $r->addRoute('POST', '/todo/delete', ['App\Controllers\TodoController', 'delete']);
+    $r->addRoute('POST', '/todo/complete', ['App\Controllers\TodoController', 'complete']);
 });
 
 

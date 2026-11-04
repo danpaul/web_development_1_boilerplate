@@ -15,7 +15,7 @@ PHP Docker boilerplate used for class learning and as the starting point for stu
 - `app/public/index.php`: front controller and route definitions
 - `app/src/Controllers/`: `HomeController`, `HelloController`, `TodoController`
 - `app/src/Views/`: view templates (`todo.php`)
-- `app/data/`: runtime JSON storage for the todo example (`todos.json`); created by `TodoController`, gitignored
+- `app/data/`: runtime JSON storage for the todo example (`todos.json`, `completed.json`); created by `TodoController`, gitignored
 - `specs/`: specs (`specs/<id>/spec.md`)
 - `.agents/skills/`, `.claude/skills/`: spec workflow skills
 - `skills-lock.json`: where each skill comes from

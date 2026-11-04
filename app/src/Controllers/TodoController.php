@@ -20,11 +20,13 @@ namespace App\Controllers;
 class TodoController
 {
     private const DATA_DIR = __DIR__ . '/../../data';
-    private const DATA_FILE = self::DATA_DIR . '/todos.json';
+    private const TODOS_FILE = self::DATA_DIR . '/todos.json';
+    private const COMPLETED_FILE = self::DATA_DIR . '/completed.json';
 
     public function index($vars = [])
     {
-        $todos = $this->readTodos();
+        $todos = $this->readList(self::TODOS_FILE);
+        $completed = $this->readList(self::COMPLETED_FILE);
         require __DIR__ . '/../Views/todo.php';
     }
 
@@ -37,9 +39,9 @@ class TodoController
         $text = trim($text);
 
         if ($text !== '') {
-            $todos = $this->readTodos();
+            $todos = $this->readList(self::TODOS_FILE);
             array_unshift($todos, ['id' => bin2hex(random_bytes(8)), 'text' => $text]);
-            $this->writeTodos($todos);
+            $this->writeList(self::TODOS_FILE, $todos);
         }
 
         $this->redirect();
@@ -52,14 +54,37 @@ class TodoController
             $id = '';
         }
 
-        $todos = $this->readTodos();
+        $todos = $this->readList(self::TODOS_FILE);
         $remaining = array_values(array_filter(
             $todos,
             fn($todo) => ($todo['id'] ?? null) !== $id
         ));
 
         if (count($remaining) !== count($todos)) {
-            $this->writeTodos($remaining);
+            $this->writeList(self::TODOS_FILE, $remaining);
+        }
+
+        $this->redirect();
+    }
+
+    public function complete($vars = [])
+    {
+        $id = $_POST['id'] ?? '';
+        if (!is_string($id)) {
+            $id = '';
+        }
+
+        $todos = $this->readList(self::TODOS_FILE);
+        foreach ($todos as $index => $todo) {
+            if (($todo['id'] ?? null) === $id) {
+                $completed = $this->readList(self::COMPLETED_FILE);
+                // same {id, text} object, newest first
+                array_unshift($completed, $todo);
+                unset($todos[$index]);
+                $this->writeList(self::COMPLETED_FILE, $completed);
+                $this->writeList(self::TODOS_FILE, $todos);
+                break;
+            }
         }
 
         $this->redirect();
@@ -73,26 +98,28 @@ class TodoController
             chmod(self::DATA_DIR, 0777);
         }
 
-        if (!file_exists(self::DATA_FILE)) {
-            file_put_contents(self::DATA_FILE, '[]');
-            chmod(self::DATA_FILE, 0666);
+        foreach ([self::TODOS_FILE, self::COMPLETED_FILE] as $file) {
+            if (!file_exists($file)) {
+                file_put_contents($file, '[]');
+                chmod($file, 0666);
+            }
         }
     }
 
-    private function readTodos(): array
+    private function readList(string $file): array
     {
         $this->ensureStorage();
-        $todos = json_decode(file_get_contents(self::DATA_FILE), true);
+        $items = json_decode(file_get_contents($file), true);
 
         // invalid JSON or anything that is not a list is treated as empty
-        return is_array($todos) ? $todos : [];
+        return is_array($items) ? $items : [];
     }
 
-    private function writeTodos(array $todos): void
+    private function writeList(string $file, array $items): void
     {
         file_put_contents(
-            self::DATA_FILE,
-            json_encode(array_values($todos), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+            $file,
+            json_encode(array_values($items), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
         );
     }
 

@@ -75,9 +75,9 @@ Go to [http://localhost](http://localhost). You should see "Welcome home!" (from
 
 ### Todo example
 
-Go to [http://localhost/todo](http://localhost/todo) to add and delete items.
+Go to [http://localhost/todo](http://localhost/todo) to add, complete and delete items. Completed items move to a read-only Completed list on the same page.
 
-Items are stored in `app/data/todos.json` (created automatically, gitignored), not in the database. The code is in `app/src/Controllers/TodoController.php` and `app/src/Views/todo.php`.
+Items are stored in `app/data/todos.json` and completed items in `app/data/completed.json` (created automatically, gitignored), not in the database. The code is in `app/src/Controllers/TodoController.php` and `app/src/Views/todo.php`.
 
 It puts everything in one controller on purpose and is not a model for a final project's structure (see the warning in the controller).
 
