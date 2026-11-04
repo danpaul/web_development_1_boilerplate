@@ -73,6 +73,14 @@ NGINX will now serve files in the app/public folder.
 
 Go to [http://localhost](http://localhost). You should see "Welcome home!" (from `HomeController::home`).
 
+### Todo example
+
+Go to [http://localhost/todo](http://localhost/todo) to add and delete items.
+
+Items are stored in `app/data/todos.json` (created automatically, gitignored), not in the database. The code is in `app/src/Controllers/TodoController.php` and `app/src/Views/todo.php`.
+
+It puts everything in one controller on purpose and is not a model for a final project's structure (see the warning in the controller).
+
 ### PHPMyAdmin
 
 PHPMyAdmin provides basic database administration. It is accessible at [localhost:8080](localhost:8080).

@@ -41,3 +41,6 @@ node_modules/
 # Docker overrides (optional local overrides)
 docker-compose.override.yml
 
+
+# App data
+/app/data/
