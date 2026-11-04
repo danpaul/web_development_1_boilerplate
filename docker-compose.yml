@@ -12,6 +12,11 @@ services:
             dockerfile: PHP.Dockerfile
         volumes:
             - ./app:/app
+        environment:
+            DB_HOST: 'mysql'
+            DB_NAME: 'developmentdb'
+            DB_USER: 'developer'
+            DB_PASSWORD: 'secret123'
     mysql:
         image: mariadb:lts
         environment:
