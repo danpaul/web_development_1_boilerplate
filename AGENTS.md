@@ -7,6 +7,7 @@ PHP Docker boilerplate used for class learning and as the starting point for stu
 - `docker-compose.yml`: services
 - `PHP.Dockerfile`: php-fpm image with PDO/pdo_mysql and Composer
 - `nginx.conf`: web server config
+- `.env.example`: tracked default DB credentials. Copy to `.env` (gitignored), which Docker Compose reads
 - `app/composer.json`, `app/composer.lock`: PHP dependencies and autoload
 - `app/phinx.php`: Phinx config (env vars `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`)
 - `app/db/migrations/`: Phinx migrations (`app/db/seeds/` for seeds)
@@ -46,6 +47,7 @@ public function greet($vars = [])
 ## Commands
 
 ```sh
+cp .env.example .env
 docker compose up
 docker compose down
 docker compose run --rm php composer install
@@ -61,7 +63,12 @@ docker compose run --rm php vendor/bin/phinx status
 - App: `http://localhost`
 - phpMyAdmin: `http://localhost:8080`
 - MariaDB: port `3306` from the host. From inside the containers, use host `mysql`.
-- Database `developmentdb`, user `developer` / `secret123`, root password `secret123`
+- Credentials come from `.env`. The defaults in `.env.example` are database `developmentdb`, user `developer` / `secret123`, root password `secret123`.
+
+## Environment
+
+- Never commit `.env`.
+- New DB-related variables go in `.env.example` and in a `${VAR}` substitution in `docker-compose.yml`.
 
 ## Database changes
 

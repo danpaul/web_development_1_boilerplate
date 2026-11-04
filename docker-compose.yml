@@ -13,17 +13,17 @@ services:
         volumes:
             - ./app:/app
         environment:
-            DB_HOST: 'mysql'
-            DB_NAME: 'developmentdb'
-            DB_USER: 'developer'
-            DB_PASSWORD: 'secret123'
+            DB_HOST: ${DB_HOST}
+            DB_NAME: ${DB_NAME}
+            DB_USER: ${DB_USER}
+            DB_PASSWORD: ${DB_PASSWORD}
     mysql:
         image: mariadb:lts
         environment:
-            MARIADB_ROOT_PASSWORD: 'secret123'
-            MARIADB_USER: 'developer'
-            MARIADB_PASSWORD: 'secret123'
-            MARIADB_DATABASE: 'developmentdb'
+            MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+            MARIADB_USER: ${DB_USER}
+            MARIADB_PASSWORD: ${DB_PASSWORD}
+            MARIADB_DATABASE: ${DB_NAME}
         volumes:
             - mysqldata:/var/lib/mysql
         ports:
@@ -33,6 +33,6 @@ services:
         ports:
             - 8080:80
         environment:
-            - PMA_HOST=mysql
+            PMA_HOST: ${DB_HOST}
 volumes:
     mysqldata: {}

@@ -13,6 +13,32 @@ It contains:
 
 1. Install Docker Desktop on Windows or Mac, or Docker Engine on Linux.
 1. Clone the project
+1. Copy the env file:
+   ```bash
+   cp .env.example .env
+   ```
+
+## Environment variables
+
+Docker Compose reads `.env` and passes the values to the php, mysql and phpMyAdmin services.
+
+| Variable | What it is for |
+| --- | --- |
+| `DB_HOST` | Database host as seen from the containers (the `mysql` service). Used by PHP/Phinx and phpMyAdmin. |
+| `DB_NAME` | Database created by MariaDB and used by the app. |
+| `DB_USER` | The app's database user, also used for the phpMyAdmin login. |
+| `DB_PASSWORD` | Password for `DB_USER`, also used for the phpMyAdmin login. |
+| `DB_ROOT_PASSWORD` | MariaDB root password. |
+
+`.env` is gitignored and must never be committed. `.env.example` is the tracked template.
+
+Without `.env`, Docker Compose warns that the variables are not set and uses blank values, so the database services will not work. Run `cp .env.example .env` to fix it.
+
+MariaDB applies the credentials only when the `mysqldata` volume is first created. To change them later, run the command below, which **deletes all database data**, then run `docker compose up` again:
+
+```bash
+docker compose down -v
+```
 
 ## Usage
 
@@ -51,7 +77,7 @@ Go to [http://localhost/hello.php](http://localhost/hello.php). You should see a
 
 PHPMyAdmin provides basic database administration. It is accessible at [localhost:8080](localhost:8080).
 
-Credentials are defined in `docker-compose.yml`. They are: developer/secret123
+Log in with `DB_USER` / `DB_PASSWORD` from `.env` (default `developer` / `secret123`).
 
 
 ### Stopping the docker container
