@@ -39,7 +39,7 @@ If you add new classes or change namespaces, regenerate the autoloader:
 docker compose run --rm php composer dump-autoload
 ```
 
-Example usage is wired in `app/public/index.php` and a sample class exists at `app/src/hello.php`.
+Example usage is wired in `app/public/index.php`. A sample script is at `app/public/hello.php`, and controller classes live under `app/src/Controllers/`.
 
 ### NGINX
 

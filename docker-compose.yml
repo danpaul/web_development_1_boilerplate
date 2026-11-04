@@ -1,8 +1,6 @@
-version: '3'
-
 services:
     nginx:
-        image: nginx:latest
+        image: nginx:1.30
         ports:
             - "80:80"
         volumes:
@@ -15,18 +13,18 @@ services:
         volumes:
             - ./app:/app
     mysql:
-        image: mariadb:latest
+        image: mariadb:lts
         environment:
-            MYSQL_ROOT_PASSWORD: 'secret123'
-            MYSQL_USER: 'developer'
-            MYSQL_PASSWORD: 'secret123'
-            MYSQL_DATABASE: 'developmentdb'
+            MARIADB_ROOT_PASSWORD: 'secret123'
+            MARIADB_USER: 'developer'
+            MARIADB_PASSWORD: 'secret123'
+            MARIADB_DATABASE: 'developmentdb'
         volumes:
             - mysqldata:/var/lib/mysql
         ports:
             - 3306:3306
     phpmyadmin:
-        image: phpmyadmin:latest
+        image: phpmyadmin:5.2
         ports:
             - 8080:80
         environment:

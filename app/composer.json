@@ -2,6 +2,7 @@
   "name": "docker-template/app",
   "type": "project",
   "require": {
+    "php": ">=8.5",
     "nikic/fast-route": "^1.3"
   },
   "autoload": {
