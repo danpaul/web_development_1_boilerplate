@@ -14,7 +14,7 @@ class GuestbookController
                 $_ENV['DB_PASSWORD']
             );
             $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-            $stmt = $db->query('SELECT * FROM posts ORDER BY posted_at DESC');
+            $stmt = $db->query('SELECT * FROM guestbook_2 ORDER BY posted_at DESC');
             $posts = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             require_once __DIR__ . '/../Views/guestbook.php';
         } catch (\PDOException $e) {
