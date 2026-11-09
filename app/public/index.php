@@ -19,6 +19,7 @@ $dispatcher = simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/', ['App\Controllers\HomeController', 'home']);
     $r->addRoute('GET', '/hello/{name}', ['App\Controllers\HelloController', 'greet']);
     $r->addRoute('GET', '/guestbook', ['App\Controllers\GuestbookController', 'getPosts']);
+    $r->addRoute('POST', '/guestbook', ['App\Controllers\GuestbookController', 'addPost']);
 });
 
 
