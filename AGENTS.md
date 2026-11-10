@@ -16,6 +16,7 @@ PHP Docker boilerplate used for class learning and as the starting point for stu
 - `app/vendor/`: generated and gitignored. The php container runs `composer install` on start if it is missing.
 - `app/public/index.php`: front controller and route definitions
 - `app/src/Controllers/`: `HomeController`, `HelloController`
+- `app/src/Models/`: `Article`
 - `specs/`: specs (`specs/<id>/spec.md`)
 - `.agents/skills/`, `.claude/skills/`: spec workflow skills
 - `skills-lock.json`: where each skill comes from
@@ -86,6 +87,12 @@ docker compose run --rm php vendor/bin/phinx seed:run -s ArticlesSeeder
 
 - `articles` (migration `CreateArticlesTable`): `id`, `title`, `content`, `author`, `created_at`.
 - Seed data: `ArticlesSeeder` inserts 20 articles by 3 authors with distinct `created_at` dates (2026-10-01 to 2026-10-20). It truncates `articles` on every run.
+
+## Models
+
+- Models live in `app/src/Models/` under the `App\Models` namespace.
+- Property names and types match the table's columns exactly, as defined by the migration (snake_case kept, e.g. `created_at`); no extra or missing properties. Auto-filled columns (`id`, `created_at`) are nullable with a `null` default.
+- Models are data only (no database access or other behaviour) and can be loaded with `PDO::FETCH_CLASS` (`$stmt->fetchAll(PDO::FETCH_CLASS, Article::class)`); no constructor arguments.
 
 ## Spec workflow
 

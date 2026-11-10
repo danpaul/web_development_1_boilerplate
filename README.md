@@ -67,6 +67,23 @@ docker compose run --rm php composer dump-autoload
 
 Example usage is wired in `app/public/index.php`: the `GET /hello/{name}` route calls `HelloController` (`app/src/Controllers/HelloController.php`) as an example. Controller classes live under `app/src/Controllers/`.
 
+### Models
+
+Models live in `app/src/Models/` under the `App\Models` namespace, for example `App\Models\Article` (`app/src/Models/Article.php`).
+
+- A model's property names and types match its table's columns exactly, as defined by the migration. Names keep the column's snake_case (for example `created_at`), with no extra or missing properties.
+- Columns the database fills in automatically (`id`, `created_at`) are nullable with a `null` default, so `new Article()` works for an article that has not been saved yet.
+- Models hold data only: no database access, queries or other behaviour.
+
+Because the properties match the columns, PDO can load rows straight into model objects:
+
+```php
+use App\Models\Article;
+
+$stmt = $pdo->query('SELECT * FROM articles');
+$articles = $stmt->fetchAll(PDO::FETCH_CLASS, Article::class);
+```
+
 ### NGINX
 
 NGINX will now serve files in the app/public folder.
