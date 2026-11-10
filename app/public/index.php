@@ -20,7 +20,6 @@ $dispatcher = simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/hello/{name}', ['App\Controllers\HelloController', 'greet']);
 });
 
-
 /**
  * Get the request method and URI from the server variables and invoke the dispatcher.
  */
@@ -31,6 +30,7 @@ $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 /**
  * Switch on the dispatcher result and call the appropriate controller method if found.
  */
+// TODO: add a proper HTML view for error states below.
 switch ($routeInfo[0]) {
     // Handle not found routes
     case FastRoute\Dispatcher::NOT_FOUND:
@@ -49,5 +49,9 @@ switch ($routeInfo[0]) {
         $controller = new $class();
         $vars = $routeInfo[2];
         $controller->$method($vars);
+        break;
+    default:
+        http_response_code(500);
+        echo 'Internal Server Error';
         break;
 }
