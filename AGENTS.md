@@ -15,8 +15,12 @@ PHP Docker boilerplate used for class learning and as the starting point for stu
 - `app/db/seeds/ArticlesSeeder.php`: truncates `articles` and inserts 20 sample articles
 - `app/vendor/`: generated and gitignored. The php container runs `composer install` on start if it is missing.
 - `app/public/index.php`: front controller and route definitions
-- `app/src/Controllers/`: `HomeController`, `HelloController`
+- `app/src/Controllers/`: `ArticleController`
 - `app/src/Models/`: `Article`
+- `app/src/Services/`: `IArticleService`, `ArticleService`
+- `app/src/Repositories/`: `IArticleRepository`, `ArticleRepository`
+- `app/src/ViewModels/`: `ArticlesViewModel`
+- `app/src/Views/`: views per area (`articles/`) and shared `partials/`
 - `specs/`: specs (`specs/<id>/spec.md`)
 - `.agents/skills/`, `.claude/skills/`: spec workflow skills
 - `skills-lock.json`: where each skill comes from
@@ -38,14 +42,10 @@ PHP Docker boilerplate used for class learning and as the starting point for stu
 
 ```php
 // app/public/index.php
-$r->addRoute('GET', '/hello/{name}', ['App\Controllers\HelloController', 'greet']);
-
-// app/src/Controllers/HelloController.php
-public function greet($vars = [])
-{
-    $name = $vars['name'] ?? 'World';
-}
+$r->addRoute('GET', '/articles', ['App\Controllers\ArticleController', 'index']);
 ```
+
+- Route variables (e.g. `/{id}`) arrive in the controller method's `$vars` array.
 
 ## Commands
 
@@ -93,6 +93,14 @@ docker compose run --rm php vendor/bin/phinx seed:run -s ArticlesSeeder
 - Models live in `app/src/Models/` under the `App\Models` namespace.
 - Property names and types match the table's columns exactly, as defined by the migration (snake_case kept, e.g. `created_at`); no extra or missing properties. Auto-filled columns (`id`, `created_at`) are nullable with a `null` default.
 - Models are data only (no database access or other behaviour) and can be loaded with `PDO::FETCH_CLASS` (`$stmt->fetchAll(PDO::FETCH_CLASS, Article::class)`); no constructor arguments.
+
+## Views
+
+- View models live in `app/src/ViewModels/` under `App\ViewModels`, are data only, and are passed to the view as `$model`.
+- Views live in `app/src/Views/<area>/`, partials in `app/src/Views/partials/`.
+- Views and partials type their variables with `/** @var ... */` DocBlocks.
+- Controllers render by assigning `$model` and `require`-ing the view (`require __DIR__ . '/../Views/<area>/<view>.php'`); no render helper or base controller.
+- Escape all output with `htmlspecialchars`; no CSS.
 
 ## Spec workflow
 

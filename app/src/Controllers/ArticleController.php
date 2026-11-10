@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Services\ArticleService;
 use App\Services\IArticleService;
+use App\ViewModels\ArticlesViewModel;
 
 class ArticleController
 {
@@ -17,6 +18,7 @@ class ArticleController
     public function index($vars = [])
     {
         $articles = $this->articleService->getAll();
-        var_dump($articles);
+        $model = new ArticlesViewModel('Articles', $articles);
+        require __DIR__ . '/../Views/articles/index.php';
     }
 }

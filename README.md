@@ -65,7 +65,7 @@ If you add new classes or change namespaces, regenerate the autoloader:
 docker compose run --rm php composer dump-autoload
 ```
 
-Example usage is wired in `app/public/index.php`: the `GET /hello/{name}` route calls `HelloController` (`app/src/Controllers/HelloController.php`) as an example. Controller classes live under `app/src/Controllers/`.
+Routes are defined in `app/public/index.php`: the `GET /articles` route calls `ArticleController::index` (`app/src/Controllers/ArticleController.php`). Controller classes live under `app/src/Controllers/`.
 
 ### Models
 
@@ -84,11 +84,28 @@ $stmt = $pdo->query('SELECT * FROM articles');
 $articles = $stmt->fetchAll(PDO::FETCH_CLASS, Article::class);
 ```
 
+### Views
+
+- View models live in `app/src/ViewModels/` under the `App\ViewModels` namespace. They hold data only and are passed to the view as `$model`. For example, `ArticlesViewModel` has `title` and `articles`.
+- Views live in `app/src/Views/<area>/` (for example `articles/index.php`). Partials live in `app/src/Views/partials/` (`header.php`, `footer.php`, `article.php`).
+- Views and partials declare the variables they use with `/** @var ... */` DocBlocks at the top of the file.
+- All output is escaped with `htmlspecialchars`.
+- Controllers render a page by assigning `$model` and `require`-ing the view:
+
+```php
+public function index($vars = [])
+{
+    $articles = $this->articleService->getAll();
+    $model = new ArticlesViewModel('Articles', $articles);
+    require __DIR__ . '/../Views/articles/index.php';
+}
+```
+
 ### NGINX
 
 NGINX will now serve files in the app/public folder.
 
-Go to [http://localhost](http://localhost). You should see "Welcome home!" (from `HomeController::home`).
+Go to [http://localhost/articles](http://localhost/articles) to see the article list (run the migrations and the seeder first).
 
 ### PHPMyAdmin
 
