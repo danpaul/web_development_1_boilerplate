@@ -10,7 +10,9 @@ PHP Docker boilerplate used for class learning and as the starting point for stu
 - `.env.example`: tracked default DB credentials. Copy to `.env` (gitignored), which Docker Compose reads
 - `app/composer.json`, `app/composer.lock`: PHP dependencies and autoload
 - `app/phinx.php`: Phinx config (env vars `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`)
-- `app/db/migrations/`: Phinx migrations (`app/db/seeds/` for seeds)
+- `app/db/migrations/`: Phinx migrations
+- `app/db/seeds/`: Phinx seeders
+- `app/db/seeds/ArticlesSeeder.php`: truncates `articles` and inserts 20 sample articles
 - `app/vendor/`: generated and gitignored. The php container runs `composer install` on start if it is missing.
 - `app/public/index.php`: front controller and route definitions
 - `app/src/Controllers/`: `HomeController`, `HelloController`
@@ -56,6 +58,9 @@ docker compose run --rm php vendor/bin/phinx create CamelCaseName
 docker compose run --rm php vendor/bin/phinx migrate
 docker compose run --rm php vendor/bin/phinx rollback
 docker compose run --rm php vendor/bin/phinx status
+docker compose run --rm php vendor/bin/phinx seed:create CamelCaseName
+docker compose run --rm php vendor/bin/phinx seed:run
+docker compose run --rm php vendor/bin/phinx seed:run -s ArticlesSeeder
 ```
 
 ## Services and credentials (development only)
@@ -76,6 +81,11 @@ docker compose run --rm php vendor/bin/phinx status
 - Create migration files with `vendor/bin/phinx create CamelCaseName`, never by hand.
 - Each migration makes one logical change.
 - Ask the user before any destructive change (dropping tables or columns, or anything else that loses data).
+
+## Database tables
+
+- `articles` (migration `CreateArticlesTable`): `id`, `title`, `content`, `author`, `created_at`.
+- Seed data: `ArticlesSeeder` inserts 20 articles by 3 authors with distinct `created_at` dates (2026-10-01 to 2026-10-20). It truncates `articles` on every run.
 
 ## Spec workflow
 

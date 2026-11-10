@@ -202,3 +202,33 @@ $this->table('posts')
     ->addColumn('slug', 'string', ['limit' => 150])
     ->update();
 ```
+
+## Database seeding
+
+Seeders are PHP classes that fill tables with sample data for development, so you don't have to type rows by hand. They live in `app/db/seeds/`, extend `Phinx\Seed\AbstractSeed` and put their logic in the `run()` method.
+
+The project includes `ArticlesSeeder` (`app/db/seeds/ArticlesSeeder.php`), which fills the `articles` table with 20 sample articles.
+
+Run the migrations first (`phinx migrate`), because the tables must exist before they can be seeded.
+
+### Commands
+
+Create a new seeder file. The name must be CamelCase:
+
+```bash
+docker compose run --rm php vendor/bin/phinx seed:create ArticlesSeeder
+```
+
+Run all seeders:
+
+```bash
+docker compose run --rm php vendor/bin/phinx seed:run
+```
+
+Run one seeder:
+
+```bash
+docker compose run --rm php vendor/bin/phinx seed:run -s ArticlesSeeder
+```
+
+> **Warning:** `ArticlesSeeder` truncates the `articles` table before inserting, so every existing row is deleted. It then inserts 20 sample articles. Running it again always leaves exactly those 20 rows.
