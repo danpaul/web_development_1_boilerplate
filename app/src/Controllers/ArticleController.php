@@ -24,6 +24,12 @@ class ArticleController
         require __DIR__ . '/../Views/articles/index.php';
     }
 
+    public function create($vars = [])
+    {
+        $model = new ArticleViewModel('New article', new Article());
+        require __DIR__ . '/../Views/articles/create.php';
+    }
+
     public function show($vars = [])
     {
         $article = $this->articleService->get((int) $vars['id']);
@@ -34,6 +40,18 @@ class ArticleController
         }
         $model = new ArticleViewModel($article->title, $article);
         require __DIR__ . '/../Views/articles/show.php';
+    }
+
+    public function edit($vars = [])
+    {
+        $article = $this->articleService->get((int) $vars['id']);
+        if ($article === null) {
+            http_response_code(404);
+            echo 'Not Found';
+            return;
+        }
+        $model = new ArticleViewModel('Edit article', $article);
+        require __DIR__ . '/../Views/articles/edit.php';
     }
 
     public function store($vars = [])
