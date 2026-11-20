@@ -17,6 +17,12 @@ use function FastRoute\simpleDispatcher;
  */
 $dispatcher = simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('GET', '/articles', ['App\Controllers\ArticleController', 'index']);
+    $r->addRoute('GET', '/articles/create', ['App\Controllers\ArticleController', 'create']);
+    $r->addRoute('GET', '/articles/{id}', ['App\Controllers\ArticleController', 'show']);
+    $r->addRoute('GET', '/articles/{id}/edit', ['App\Controllers\ArticleController', 'edit']);
+    $r->addRoute('POST', '/articles/create', ['App\Controllers\ArticleController', 'store']);
+    $r->addRoute('POST', '/articles/{id}/edit', ['App\Controllers\ArticleController', 'update']);
+    $r->addRoute('POST', '/articles/{id}/delete', ['App\Controllers\ArticleController', 'destroy']);
 });
 
 /**

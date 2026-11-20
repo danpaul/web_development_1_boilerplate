@@ -21,21 +21,22 @@ class ArticleService implements IArticleService
 
     public function create(Article $article): void
     {
-        
+        $this->articleRepository->create($article);
     }
 
     public function get(int $id): ?Article
     {
-        return null;
+        return $this->articleRepository->get($id);
     }
 
     public function update(Article $article): void
     {
-        
+        $this->articleRepository->update($article);
     }
 
     public function delete(int $id): void
     {
+        $this->articleRepository->delete($id);
     }
 
 }

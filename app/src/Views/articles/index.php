@@ -3,6 +3,7 @@
 ?>
 <?php require __DIR__ . '/../partials/header.php'; ?>
 <main>
+    <p><a href="/articles/create">New article</a></p>
     <?php if (empty($model->articles)): ?>
         <p>No articles found.</p>
     <?php else: ?>
