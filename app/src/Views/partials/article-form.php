@@ -18,10 +18,10 @@ $action = $isNew ? '/articles/create' : '/articles/' . $article->id . '/edit';
     </p>
     <p>
         <?php if ($isNew): ?>
-            <button type="submit">Create</button>
+        <button type="submit">Create</button>
         <?php else: ?>
-            <button type="submit">Save</button>
-            <a href="<?= htmlspecialchars('/articles/' . $article->id) ?>">Cancel</a>
+        <button type="submit">Save</button>
+        <a href="<?= htmlspecialchars('/articles/' . $article->id) ?>">Cancel</a>
         <?php endif; ?>
     </p>
 </form>
