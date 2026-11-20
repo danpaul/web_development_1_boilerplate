@@ -1,5 +1,5 @@
 <?php
-/** @var \App\ViewModels\ArticlesViewModel $model */
+/** @var \App\ViewModels\ArticlesViewModel|\App\ViewModels\ArticleViewModel $model */
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -19,7 +19,7 @@ PHP Docker boilerplate used for class learning and as the starting point for stu
 - `app/src/Models/`: `Article`
 - `app/src/Services/`: `IArticleService`, `ArticleService`
 - `app/src/Repositories/`: `IArticleRepository`, `ArticleRepository`
-- `app/src/ViewModels/`: `ArticlesViewModel`
+- `app/src/ViewModels/`: `ArticlesViewModel`, `ArticleViewModel`
 - `app/src/Views/`: views per area (`articles/`) and shared `partials/`
 - `specs/`: specs (`specs/<id>/spec.md`)
 - `.agents/skills/`, `.claude/skills/`: spec workflow skills
