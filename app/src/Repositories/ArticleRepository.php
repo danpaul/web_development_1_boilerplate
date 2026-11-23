@@ -12,13 +12,6 @@ class ArticleRepository extends Repository implements IArticleRepository
         parent::__construct('articles', Article::class);
     }
 
-    public function getAll(): array
-    {
-        $stmt = $this->getPDO()->query('SELECT * FROM articles');
-        $results = $stmt->fetchAll(\PDO::FETCH_CLASS, Article::class);
-        return $results ?: [];
-    }
-
     public function create(Article $article): void
     {
         $stmt = $this->pdo->prepare(

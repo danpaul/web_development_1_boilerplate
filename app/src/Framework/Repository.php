@@ -32,7 +32,8 @@ class Repository
     {
         $stmt = self::$pdo->prepare("SELECT * FROM {$this->tableName} WHERE id = :id");
         $stmt->execute(['id' => $id]);
-        $result = $stmt->fetch(\PDO::FETCH_CLASS, $this->modelClass);
+        $stmt->setFetchMode(\PDO::FETCH_CLASS, $this->modelClass);
+        $result = $stmt->fetch();
         return $result ?: null;
     }
 }
