@@ -14,7 +14,7 @@ class ArticleRepository extends Repository implements IArticleRepository
 
     public function create(Article $article): void
     {
-        $stmt = $this->pdo->prepare(
+        $stmt = $this->getPdo()->prepare(
             'INSERT INTO articles (title, content, author) VALUES (:title, :content, :author)'
         );
         $stmt->bindValue(':title', $article->title);
@@ -30,7 +30,7 @@ class ArticleRepository extends Repository implements IArticleRepository
 
     public function update(Article $article): void
     {
-        $stmt = $this->pdo->prepare(
+        $stmt = $this->getPdo()->prepare(
             'UPDATE articles SET title = :title, content = :content, author = :author WHERE id = :id'
         );
         $stmt->bindValue(':title', $article->title);
@@ -42,7 +42,7 @@ class ArticleRepository extends Repository implements IArticleRepository
 
     public function delete(int $id): void
     {
-        $stmt = $this->pdo->prepare('DELETE FROM articles WHERE id = :id');
+        $stmt = $this->getPdo()->prepare('DELETE FROM articles WHERE id = :id');
         $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
         $stmt->execute();
     }
