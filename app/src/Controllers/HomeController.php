@@ -18,9 +18,9 @@ class HomeController
     public function home($vars = [])
     {
         // Normally you would get the entry ID from the route parameter, database, or query string, but for this example, we'll use a hardcoded ID.
+
+        // YOU SHOULD REPLACE THIS WITH YOUR OWN CONTENTFUL ENTRY ID
         $content = $this->contentfulService->getEntry('6C4zuCkd7Lok85PIFYmb5n');
-        // echo json_encode($content);
-        // die();
         $vm = new HomeViewModel($content);
         require __DIR__ . '/../Views/home/index.php';
     }
