@@ -2,20 +2,22 @@
 
 namespace App\Controllers;
 
-use Contentful\Delivery\Client;
+use App\Services\ContentfulService;
+use App\Services\IContentfulService;
 
 class ContentfulTestController
 {
+    private IContentfulService $contentfulService;
+
+    public function __construct()
+    {
+        $this->contentfulService = new ContentfulService();
+    }
+
     public function hello($vars = [])
     {
-        $client = new Client(
-            getenv('CONTENTFUL_ACCESS_TOKEN'),
-            getenv('CONTENTFUL_SPACE_ID'),
-            getenv('CONTENTFUL_ENVIRONMENT_ID') ?: 'master'
-        );
-
-        $space = $client->getSpace();
-        $entries = $client->getEntries();
+        $space = $this->contentfulService->getSpace();
+        $entries = $this->contentfulService->getEntries();
 
         // normally we don't want to echo from a controller method directly
         // but rather load a view template
