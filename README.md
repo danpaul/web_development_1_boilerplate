@@ -65,13 +65,47 @@ If you add new classes or change namespaces, regenerate the autoloader:
 docker compose run --rm php composer dump-autoload
 ```
 
-Example usage is wired in `app/public/index.php`: the `GET /hello/{name}` route calls `HelloController` (`app/src/Controllers/HelloController.php`) as an example. Controller classes live under `app/src/Controllers/`.
+Routes are defined in `app/public/index.php`: the `GET /articles` route calls `ArticleController::index` (`app/src/Controllers/ArticleController.php`). Controller classes live under `app/src/Controllers/`.
+
+### Models
+
+Models live in `app/src/Models/` under the `App\Models` namespace, for example `App\Models\Article` (`app/src/Models/Article.php`).
+
+- A model's property names and types match its table's columns exactly, as defined by the migration. Names keep the column's snake_case (for example `created_at`), with no extra or missing properties.
+- Columns the database fills in automatically (`id`, `created_at`) are nullable with a `null` default, so `new Article()` works for an article that has not been saved yet.
+- Models hold data only: no database access, queries or other behaviour.
+
+Because the properties match the columns, PDO can load rows straight into model objects:
+
+```php
+use App\Models\Article;
+
+$stmt = $pdo->query('SELECT * FROM articles');
+$articles = $stmt->fetchAll(PDO::FETCH_CLASS, Article::class);
+```
+
+### Views
+
+- View models live in `app/src/ViewModels/` under the `App\ViewModels` namespace. They hold data only and are passed to the view as `$model`. For example, `ArticlesViewModel` has `title` and `articles`.
+- Views live in `app/src/Views/<area>/` (for example `articles/index.php`). Partials live in `app/src/Views/partials/` (`header.php`, `footer.php`, `article.php`).
+- Views and partials declare the variables they use with `/** @var ... */` DocBlocks at the top of the file.
+- All output is escaped with `htmlspecialchars`.
+- Controllers render a page by assigning `$model` and `require`-ing the view:
+
+```php
+public function index($vars = [])
+{
+    $articles = $this->articleService->getAll();
+    $model = new ArticlesViewModel('Articles', $articles);
+    require __DIR__ . '/../Views/articles/index.php';
+}
+```
 
 ### NGINX
 
 NGINX will now serve files in the app/public folder.
 
-Go to [http://localhost](http://localhost). You should see "Welcome home!" (from `HomeController::home`).
+Go to [http://localhost/articles](http://localhost/articles) to see the article list (run the migrations and the seeder first).
 
 ### PHPMyAdmin
 
@@ -202,3 +236,33 @@ $this->table('posts')
     ->addColumn('slug', 'string', ['limit' => 150])
     ->update();
 ```
+
+## Database seeding
+
+Seeders are PHP classes that fill tables with sample data for development, so you don't have to type rows by hand. They live in `app/db/seeds/`, extend `Phinx\Seed\AbstractSeed` and put their logic in the `run()` method.
+
+The project includes `ArticlesSeeder` (`app/db/seeds/ArticlesSeeder.php`), which fills the `articles` table with 20 sample articles.
+
+Run the migrations first (`phinx migrate`), because the tables must exist before they can be seeded.
+
+### Commands
+
+Create a new seeder file. The name must be CamelCase:
+
+```bash
+docker compose run --rm php vendor/bin/phinx seed:create ArticlesSeeder
+```
+
+Run all seeders:
+
+```bash
+docker compose run --rm php vendor/bin/phinx seed:run
+```
+
+Run one seeder:
+
+```bash
+docker compose run --rm php vendor/bin/phinx seed:run -s ArticlesSeeder
+```
+
+> **Warning:** `ArticlesSeeder` truncates the `articles` table before inserting, so every existing row is deleted. It then inserts 20 sample articles. Running it again always leaves exactly those 20 rows.

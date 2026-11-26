@@ -10,10 +10,17 @@ PHP Docker boilerplate used for class learning and as the starting point for stu
 - `.env.example`: tracked default DB credentials. Copy to `.env` (gitignored), which Docker Compose reads
 - `app/composer.json`, `app/composer.lock`: PHP dependencies and autoload
 - `app/phinx.php`: Phinx config (env vars `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`)
-- `app/db/migrations/`: Phinx migrations (`app/db/seeds/` for seeds)
+- `app/db/migrations/`: Phinx migrations
+- `app/db/seeds/`: Phinx seeders
+- `app/db/seeds/ArticlesSeeder.php`: truncates `articles` and inserts 20 sample articles
 - `app/vendor/`: generated and gitignored. The php container runs `composer install` on start if it is missing.
 - `app/public/index.php`: front controller and route definitions
-- `app/src/Controllers/`: `HomeController`, `HelloController`
+- `app/src/Controllers/`: `ArticleController`
+- `app/src/Models/`: `Article`
+- `app/src/Services/`: `IArticleService`, `ArticleService`
+- `app/src/Repositories/`: `IArticleRepository`, `ArticleRepository`
+- `app/src/ViewModels/`: `ArticlesViewModel`, `ArticleViewModel`
+- `app/src/Views/`: views per area (`articles/`) and shared `partials/`
 - `specs/`: specs (`specs/<id>/spec.md`)
 - `.agents/skills/`, `.claude/skills/`: spec workflow skills
 - `skills-lock.json`: where each skill comes from
@@ -35,14 +42,10 @@ PHP Docker boilerplate used for class learning and as the starting point for stu
 
 ```php
 // app/public/index.php
-$r->addRoute('GET', '/hello/{name}', ['App\Controllers\HelloController', 'greet']);
-
-// app/src/Controllers/HelloController.php
-public function greet($vars = [])
-{
-    $name = $vars['name'] ?? 'World';
-}
+$r->addRoute('GET', '/articles', ['App\Controllers\ArticleController', 'index']);
 ```
+
+- Route variables (e.g. `/{id}`) arrive in the controller method's `$vars` array.
 
 ## Commands
 
@@ -56,6 +59,9 @@ docker compose run --rm php vendor/bin/phinx create CamelCaseName
 docker compose run --rm php vendor/bin/phinx migrate
 docker compose run --rm php vendor/bin/phinx rollback
 docker compose run --rm php vendor/bin/phinx status
+docker compose run --rm php vendor/bin/phinx seed:create CamelCaseName
+docker compose run --rm php vendor/bin/phinx seed:run
+docker compose run --rm php vendor/bin/phinx seed:run -s ArticlesSeeder
 ```
 
 ## Services and credentials (development only)
@@ -76,6 +82,25 @@ docker compose run --rm php vendor/bin/phinx status
 - Create migration files with `vendor/bin/phinx create CamelCaseName`, never by hand.
 - Each migration makes one logical change.
 - Ask the user before any destructive change (dropping tables or columns, or anything else that loses data).
+
+## Database tables
+
+- `articles` (migration `CreateArticlesTable`): `id`, `title`, `content`, `author`, `created_at`.
+- Seed data: `ArticlesSeeder` inserts 20 articles by 3 authors with distinct `created_at` dates (2026-10-01 to 2026-10-20). It truncates `articles` on every run.
+
+## Models
+
+- Models live in `app/src/Models/` under the `App\Models` namespace.
+- Property names and types match the table's columns exactly, as defined by the migration (snake_case kept, e.g. `created_at`); no extra or missing properties. Auto-filled columns (`id`, `created_at`) are nullable with a `null` default.
+- Models are data only (no database access or other behaviour) and can be loaded with `PDO::FETCH_CLASS` (`$stmt->fetchAll(PDO::FETCH_CLASS, Article::class)`); no constructor arguments.
+
+## Views
+
+- View models live in `app/src/ViewModels/` under `App\ViewModels`, are data only, and are passed to the view as `$model`.
+- Views live in `app/src/Views/<area>/`, partials in `app/src/Views/partials/`.
+- Views and partials type their variables with `/** @var ... */` DocBlocks.
+- Controllers render by assigning `$model` and `require`-ing the view (`require __DIR__ . '/../Views/<area>/<view>.php'`); no render helper or base controller.
+- Escape all output with `htmlspecialchars`; no CSS.
 
 ## Spec workflow
 
